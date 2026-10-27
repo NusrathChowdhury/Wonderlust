@@ -7,7 +7,8 @@ const LEFT_LINKS = [
   { label: "Home", href: "/", active: true },
   { label: "Destinations", href: "/destinations" },
   { label: "My Bookings", href: "/bookings" },
-  { label: "Admin", href: "/admin" },
+  { label: "Add Destination", href: "/add-destination" },
+  
 ]
 
 const RIGHT_LINKS = [

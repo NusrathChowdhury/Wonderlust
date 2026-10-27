@@ -92,17 +92,6 @@ export default function AddDestinationForm() {
   ) => {
     event.preventDefault()
 
-    const res=await fetch('http://localhost:5000/add_destination',{
-        method:'POST',
-        headers:{
-            'COntent-Type':'application/json'
-        },
-        body:JSON.stringify(form)
-    })
-
-    const data=await res.json()
-    console.log(data)
-
     const nextErrors = validate(form)
     setErrors(nextErrors)
 
@@ -111,18 +100,27 @@ export default function AddDestinationForm() {
     setIsSubmitting(true)
 
     try {
-      // TODO: replace with a real API call once a backend endpoint exists
-      await new Promise((resolve) => setTimeout(resolve, 800))
+      const res = await fetch("http://localhost:5000/destinations", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
+      })
+
+      if (!res.ok) {
+        throw new Error(`Request failed with status ${res.status}`)
+      }
 
       toast.add({
-  type: "success",
-  title: "Travel package added",
-  description: `${form.name} has been added successfully.`,
-})
+        type: "success",
+        title: "Travel package added",
+        description: `${form.name} has been added successfully.`,
+      })
 
       handleReset()
     } catch {
-      toast.create({
+      toast.add({
         type: "error",
         title: "Something went wrong",
         description:
@@ -195,7 +193,7 @@ export default function AddDestinationForm() {
                     <Select
                       value={form.category}
                       onValueChange={(value) =>
-                        setField("category", value)
+                        setField("category", value ?? "")
                       }
                     >
                       <SelectTrigger
