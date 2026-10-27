@@ -14,7 +14,7 @@ import {
 } from "lucide-react"
 
 import { BookingCard } from "@/components/site/booking-card"
-import { DestinationActions } from "@/components/site/destination-actions"
+import { DestinationActions } from "@/components/Destination/destination-actions"
 import {
   formatDuration,
   highlightsFor,

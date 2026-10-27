@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { DestinationsBrowser } from "@/components/site/destinations-browser"
+import { DestinationsBrowser } from "../../../destinations-browser"
 import { normalizeDestinations, type Destination } from "@/lib/destinations"
 
 const DESTINATIONS_ENDPOINT = "http://localhost:5000/destinations"
