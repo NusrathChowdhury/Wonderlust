@@ -25,6 +25,7 @@ export async function connectToMongoDB() {
 const mongoClient = await connectToMongoDB()
 const db = mongoClient.db("wanderlust")
 const destinationCollection = db.collection("destination")
+const bookingCollection = db.collection("bookings")
 
 // Add a destination
 app.post("/destinations", async (req, res) => {
@@ -86,6 +87,26 @@ app.get("/destinations/:id", async (req, res) => {
   }
 })
 
+app.post("/booking", async (req, res) => {
+  const data=req.body
+  const result=await bookingCollection.insertOne(data)
+  res.send(result)
+})
+
+app.get("/myBookings/:email", async (req, res) => {
+  try {
+    const { email } = req.params
+
+    const result = await bookingCollection
+      .find({ email })
+      .toArray()
+
+    res.json(result)
+  } catch (error) {
+    console.error("Error fetching bookings:", error)
+    res.status(500).json({ message: "Failed to fetch bookings" })
+  }
+}) 
 // Update a destination
 app.patch("/destination/:id", async (req, res) => {
   try {
