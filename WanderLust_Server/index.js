@@ -107,6 +107,39 @@ app.get("/myBookings/:email", async (req, res) => {
     res.status(500).json({ message: "Failed to fetch bookings" })
   }
 }) 
+// Cancel a booking
+app.delete("/myBookings/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!ObjectId.isValid(id)) {
+      return res.status(400).json({
+        message: "Invalid booking ID",
+      });
+    }
+
+    const result = await bookingCollection.deleteOne({
+      _id: new ObjectId(id),
+    });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({
+        message: "Booking not found",
+      });
+    }
+
+    res.json({
+      message: "Booking cancelled successfully",
+    });
+  } catch (error) {
+    console.error("Error cancelling booking:", error);
+
+    res.status(500).json({
+      message: "Failed to cancel booking",
+    });
+  }
+});
+
 // Update a destination
 app.patch("/destination/:id", async (req, res) => {
   try {
