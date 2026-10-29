@@ -13,7 +13,7 @@ import {
   Star,
 } from "lucide-react"
 
-import { BookingCard } from "@/components/site/booking-card"
+import { BookingCard } from "@/components/booking/booking-card"
 import { DestinationActions } from "@/components/Destination/destination-actions"
 import {
   formatDuration,
