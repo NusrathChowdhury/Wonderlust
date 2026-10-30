@@ -3,32 +3,11 @@ import { headers } from "next/headers";
 import CancelBookingButton from "./CancelBookingButton";
 import Link from "next/link";
 
-const getDestinationImage = (destination: string) => {
-  const name = destination.toLowerCase();
-
-  if (name.includes("sylhet")) {
-    return "https://images.unsplash.com/photo-1472396961693-142e6e269027?auto=format&fit=crop&w=900&q=85";
-  }
-
-  if (name.includes("bandarban")) {
-    return "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=900&q=85";
-  }
-
-  if (name.includes("cox") || name.includes("beach")) {
-    return "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=900&q=85";
-  }
-
-  if (name.includes("sundarban")) {
-    return "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=900&q=85";
-  }
-
-  return "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=900&q=85";
-};
-
 type Booking = {
   _id: string;
   name: string;
   email?: string;
+  imageUrl?: string;
   price: number | string;
   departureDate: string;
   bookingDate: string;
@@ -57,12 +36,12 @@ const MyBookingsPage = async () => {
             Please log in to view and manage your travel bookings.
           </p>
 
-          <a
+          <Link
             href="/login"
             className="mt-7 inline-flex rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
           >
             Log in to continue
-          </a>
+          </Link>
         </div>
       </main>
     );
@@ -79,9 +58,19 @@ const MyBookingsPage = async () => {
 
   const bookings: Booking[] = await res.json();
 
+  // Debug: Check whether booking images are coming from the backend
+  console.log(
+    "Booking images:",
+    bookings.map((booking) => ({
+      name: booking.name,
+      imageUrl: booking.imageUrl,
+    }))
+  );
+
   return (
     <main className="min-h-screen bg-slate-50 px-4 py-12 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-6xl">
+
         {/* Page Header */}
         <section className="mb-10 flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
           <div>
@@ -131,12 +120,12 @@ const MyBookingsPage = async () => {
               find your next unforgettable trip.
             </p>
 
-            <a
+            <Link
               href="/destinations"
               className="mt-7 inline-flex rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
             >
               Explore destinations →
-            </a>
+            </Link>
           </section>
         ) : (
           <div className="space-y-5">
@@ -146,16 +135,23 @@ const MyBookingsPage = async () => {
                 className="group overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-lg"
               >
                 <div className="flex flex-col md:flex-row">
+
                   {/* Destination Image */}
                   <div className="relative h-56 shrink-0 overflow-hidden md:min-h-[250px] md:w-[280px] lg:w-[320px]">
-                    <img
-                      src={getDestinationImage(booking.name)}
-                      alt={booking.name}
-                      loading="lazy"
-                      className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                    />
+                    {booking.imageUrl ? (
+                      <img
+                        src={booking.imageUrl}
+                        alt={booking.name}
+                        loading="lazy"
+                        className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center bg-slate-100 text-sm text-slate-400">
+                        Image not available
+                      </div>
+                    )}
 
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent" />
+                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent" />
 
                     <div className="absolute bottom-4 left-4 rounded-full border border-white/30 bg-white/20 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-md">
                       <span className="mr-1.5">✈</span>
@@ -182,6 +178,7 @@ const MyBookingsPage = async () => {
                       </h2>
 
                       <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
+
                         {/* Departure Date */}
                         <div className="flex items-start gap-3">
                           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-lg">

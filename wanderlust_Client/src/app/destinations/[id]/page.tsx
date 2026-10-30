@@ -257,6 +257,7 @@ const DestinationDetailsPage = async ({
               price={destination.price}
               departureDate={destination.departureDate}
               name={destination.name}
+              imageUrl={destination.imageUrl}
             />
           </aside>
         </div>
