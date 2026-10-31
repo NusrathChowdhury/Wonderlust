@@ -1,3 +1,4 @@
+
 import type { Metadata } from "next"
 import Image from "next/image"
 import Link from "next/link"
@@ -24,7 +25,7 @@ import {
   type Destination,
 } from "@/lib/destinations"
 
-const DESTINATIONS_ENDPOINT = "http://localhost:5000/destinations"
+const DESTINATIONS_ENDPOINT = process.env.NEXT_PUBLIC_API_URL
 
 export async function generateMetadata({
   params,
@@ -34,7 +35,12 @@ export async function generateMetadata({
   const { id } = await params
 
   try {
-    const res = await fetch(`${DESTINATIONS_ENDPOINT}/${id}`)
+    const res = await fetch(
+      `${DESTINATIONS_ENDPOINT}/destinations/${id}`,
+      {
+        cache: "no-store",
+      }
+    )
 
     if (!res.ok) {
       return { title: "Destination Not Found | Wanderlust" }
@@ -65,13 +71,24 @@ const DestinationDetailsPage = async ({
   let destination: Destination | null = null
 
   try {
-    const res = await fetch(`${DESTINATIONS_ENDPOINT}/${id}`)
+    const res = await fetch(
+      `${DESTINATIONS_ENDPOINT}/destinations/${id}`,
+      {
+        cache: "no-store",
+      }
+    )
 
     if (res.ok) {
       destination = normalizeDestination(await res.json())
+    } else {
+      console.error(
+        "Destination API error:",
+        res.status,
+        await res.text()
+      )
     }
-  } catch {
-    destination = null
+  } catch (error) {
+    console.error("Destination fetch error:", error)
   }
 
   if (!destination) notFound()
@@ -84,6 +101,7 @@ const DestinationDetailsPage = async ({
   return (
     <main className="min-h-screen bg-[#f7faf8] pb-16">
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+
         {/* Navigation */}
         <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
           <Link
@@ -158,6 +176,7 @@ const DestinationDetailsPage = async ({
         {/* Main Content */}
         <div className="mt-8 grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_360px] lg:gap-10">
           <div className="min-w-0 space-y-7">
+
             {/* Overview */}
             <section className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm sm:p-8">
               <div className="flex items-start gap-4">

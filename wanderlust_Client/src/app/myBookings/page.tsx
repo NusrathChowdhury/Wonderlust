@@ -48,7 +48,7 @@ const MyBookingsPage = async () => {
   }
 
   const res = await fetch(
-    `http://localhost:5000/myBookings/${encodeURIComponent(user.email)}`,
+    `${process.env.NEXT_PUBLIC_API_URL}/myBookings/${encodeURIComponent(user.email)}`,
     { cache: "no-store" }
   );
 

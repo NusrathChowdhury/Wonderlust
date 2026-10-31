@@ -1,8 +1,10 @@
+
 "use client"
 
 import * as React from "react"
 import { useRouter } from "next/navigation"
 import { Loader2, Pencil, Save, X } from "lucide-react"
+import { authClient } from "@/lib/auth-client"
 
 import {
     Dialog,
@@ -24,7 +26,7 @@ import {
 } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
 
-const API_URL = "http://localhost:5000"
+const API_URL = `${process.env.NEXT_PUBLIC_API_URL}`
 
 type DestinationForm = {
     name: string
@@ -54,6 +56,9 @@ export default function EditDestinationDialog({
     id: string
 }) {
     const router = useRouter()
+
+    const { data: session } = authClient.useSession()
+    const user = session?.user
 
     const [open, setOpen] = React.useState(false)
     const [form, setForm] = React.useState<DestinationForm>(emptyForm)
@@ -125,12 +130,12 @@ export default function EditDestinationDialog({
         }))
     }
 
-    const handleCategoryChange = (value: string) => {
-        setForm((previous) => ({
-            ...previous,
-            category: value,
-        }))
-    }
+    const handleCategoryChange = (value: string | null) => {
+    setForm((previous) => ({
+        ...previous,
+        category: value ?? "",
+    }))
+}
 
     const handleSubmit = async (
         event: React.FormEvent<HTMLFormElement>
@@ -139,6 +144,11 @@ export default function EditDestinationDialog({
 
         setError("")
         setSuccess("")
+
+        if (!user) {
+            setError("Please sign in to update this destination.")
+            return
+        }
 
         if (
             !form.name.trim() ||
@@ -174,12 +184,20 @@ export default function EditDestinationDialog({
                 description: form.description.trim(),
             }
 
+            const { data, error } = await authClient.token()
+            const token = data?.token
+
+            if (error || !token) {
+                throw new Error("Unable to get authentication token.")
+            }
+
             const response = await fetch(
                 `${API_URL}/destination/${id}`,
                 {
                     method: "PATCH",
                     headers: {
                         "Content-Type": "application/json",
+                        authorization: `Bearer ${token}`,
                     },
                     body: JSON.stringify(updatedData),
                 }

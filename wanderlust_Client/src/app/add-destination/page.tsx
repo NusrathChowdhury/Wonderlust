@@ -1,5 +1,4 @@
 
-
 "use client"
 
 import * as React from "react"
@@ -18,6 +17,7 @@ import {
 } from "@/components/ui/select"
 import { Toaster, toast } from "@/components/ui/toast"
 import { PlusIcon, XIcon } from "lucide-react"
+import { authClient } from "@/lib/auth-client"
 
 const CATEGORIES = [
   "Beach",
@@ -100,10 +100,19 @@ export default function AddDestinationForm() {
     setIsSubmitting(true)
 
     try {
-      const res = await fetch("http://localhost:5000/destinations", {
+      const { data, error } = await authClient.token()
+
+      if (error || !data?.token) {
+        throw new Error("Unable to get authentication token")
+      }
+
+      const token = data.token
+
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/destinations`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(form),
       })
@@ -119,7 +128,9 @@ export default function AddDestinationForm() {
       })
 
       handleReset()
-    } catch {
+    } catch (error) {
+      console.error("Add destination error:", error)
+
       toast.add({
         type: "error",
         title: "Something went wrong",

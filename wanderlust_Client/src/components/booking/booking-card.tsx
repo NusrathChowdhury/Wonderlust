@@ -72,7 +72,7 @@ export function BookingCard({
       console.log("Booking image URL:", imageUrl)
       console.log("Booking data:", data)
 
-      const res = await fetch("http://localhost:5000/booking", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/booking`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

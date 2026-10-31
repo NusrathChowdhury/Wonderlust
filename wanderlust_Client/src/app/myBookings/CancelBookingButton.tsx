@@ -22,7 +22,7 @@ export default function CancelBookingButton({ bookingId }: Props) {
       setLoading(true);
 
       const response = await fetch(
-        `http://localhost:5000/myBookings/${encodeURIComponent(bookingId)}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/myBookings/${encodeURIComponent(bookingId)}`,
         { method: "DELETE" }
       );
 

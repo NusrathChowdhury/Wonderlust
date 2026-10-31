@@ -4,6 +4,8 @@ import { Destinations } from "@/components/Destination/destinations"
 import { Testimonials } from "@/components/Home/testimonials"
 import { ReadyToStart } from "@/components/site/ready-to-start"
 
+export const dynamic = "force-dynamic"
+
 export default function Home() {
   return (
     <>
@@ -12,7 +14,6 @@ export default function Home() {
       <WhyChoose />
       <Testimonials />
       <ReadyToStart />
-      
     </>
   )
 }

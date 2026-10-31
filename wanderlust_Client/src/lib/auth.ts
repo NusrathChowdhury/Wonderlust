@@ -1,4 +1,5 @@
 import { betterAuth } from "better-auth";
+import { jwt } from "better-auth/plugins";
 import { MongoClient } from "mongodb";
 import { mongodbAdapter } from "@better-auth/mongo-adapter";
 
@@ -9,7 +10,25 @@ export const auth = betterAuth({
   database: mongodbAdapter(db, {
     client,
   }),
-   emailAndPassword: { 
-    enabled: true, 
-  }, 
+
+  trustedOrigins: [
+    "https://wanderlust-frontend-fnc9.vercel.app",
+    "https://wanderlust-frontend-ghl20w9py-fnc9.vercel.app",
+  ],
+
+  emailAndPassword: {
+    enabled: true,
+  },
+
+  plugins: [
+    jwt(),
+  ],
+
+  session: {
+    cookieCache: {
+      enabled: true,
+      strategy: "jwt",
+      maxAge: 7 * 24 * 60 * 60,
+    },
+  },
 });

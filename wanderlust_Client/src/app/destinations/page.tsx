@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import { DestinationsBrowser } from "../../../destinations-browser"
 import { normalizeDestinations, type Destination } from "@/lib/destinations"
 
-const DESTINATIONS_ENDPOINT = "http://localhost:5000/destinations"
+const DESTINATIONS_ENDPOINT =(`${process.env.NEXT_PUBLIC_API_URL}/destinations`)
 
 export const metadata: Metadata = {
   title: "Explore All Destinations | Wanderlust",
