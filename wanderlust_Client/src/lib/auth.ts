@@ -12,9 +12,10 @@ export const auth = betterAuth({
   }),
 
   trustedOrigins: [
-    "https://wanderlust-frontend-fnc9.vercel.app",
-    "https://wanderlust-frontend-ghl20w9py-fnc9.vercel.app",
-  ],
+  "https://wanderlust-frontend-fnc9.vercel.app",
+  "https://wanderlust-frontend-ghl20w9py-fnc9.vercel.app",
+  "https://wanderlust-frontend-olive.vercel.app",
+],
 
   emailAndPassword: {
     enabled: true,

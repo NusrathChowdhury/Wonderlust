@@ -17,20 +17,28 @@ type Destination = {
   imageUrl: string
 }
 
-const API_URL =` ${process.env.NEXT_PUBLIC_API_URL}`
+const API_URL = process.env.NEXT_PUBLIC_API_URL
 
 export async function Destinations() {
   let DESTINATIONS: Destination[] = []
 
   try {
+    if (!API_URL) {
+      throw new Error("NEXT_PUBLIC_API_URL is not configured")
+    }
+
+    // Fetch featured destinations from the Express backend
     const response = await fetch(`${API_URL}/featured-destinations`, {
       cache: "no-store",
     })
 
     if (!response.ok) {
-      throw new Error("Failed to fetch featured destinations")
+      throw new Error(
+        `Failed to fetch featured destinations: ${response.status}`
+      )
     }
 
+    // Convert the API response into JSON
     DESTINATIONS = await response.json()
   } catch (error) {
     console.error("Featured destinations error:", error)
@@ -43,6 +51,7 @@ export async function Destinations() {
           <h2 className="font-serif text-4xl md:text-5xl">
             Featured Destinations
           </h2>
+
           <p className="mt-3 text-[15px] text-slate-500">
             Handpicked places our travelers love most
           </p>
@@ -80,6 +89,7 @@ export async function Destinations() {
                     <div className="p-5">
                       <div className="flex items-baseline justify-between gap-4">
                         <h3 className="text-xl">{destination.name}</h3>
+
                         <p className="text-sm font-medium text-[#1a9dc4]">
                           ৳{destination.price}
                         </p>

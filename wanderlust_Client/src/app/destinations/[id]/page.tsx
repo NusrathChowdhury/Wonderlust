@@ -25,7 +25,7 @@ import {
   type Destination,
 } from "@/lib/destinations"
 
-const DESTINATIONS_ENDPOINT = process.env.NEXT_PUBLIC_API_URL
+const DESTINATIONS_ENDPOINT =process.env.NEXT_PUBLIC_API_URL
 
 export async function generateMetadata({
   params,
