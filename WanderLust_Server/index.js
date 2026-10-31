@@ -1,13 +1,52 @@
+
 import { MongoClient, ObjectId } from "mongodb"
 import "dotenv/config"
 import cors from "cors"
 import express from "express"
+import { createRemoteJWKSet, jwtVerify } from "jose"
 
 const app = express()
 const port = 5000
 
-app.use(cors())
+app.use(cors({
+  origin: "http://localhost:3000",
+  credentials: true,
+}))
 app.use(express.json())
+
+// Verify JWT Token
+const verifyToken = async (req, res, next) => {
+  const authHeader = req.headers.authorization
+
+  console.log("Authorization Header:", authHeader)
+
+  if (!authHeader) {
+    return res.status(401).send({ msg: "Unauthorized!" })
+  }
+
+  const token = authHeader.split(" ")[1]
+
+  if (!token) {
+    return res.status(401).send({ msg: "Unauthorized!" })
+  }
+
+  const JWKS = createRemoteJWKSet(
+    new URL(`${process.env.CLIENT_URL}/api/auth/jwks`)
+  )
+
+
+  try {
+    const { payload } = await jwtVerify(token, JWKS)
+
+    console.log("Token verified:", payload)
+
+    next()
+  } catch (error) {
+    console.error("JWT verification failed:", error.message)
+
+    return res.status(401).send({ msg: "Invalid Token!" })
+  }
+}
 
 const client = new MongoClient(process.env.MONGODB_URI)
 
@@ -28,7 +67,7 @@ const destinationCollection = db.collection("destination")
 const bookingCollection = db.collection("bookings")
 
 // Add a destination
-app.post("/destinations", async (req, res) => {
+app.post("/destinations", verifyToken, async (req, res) => {
   try {
     const result = await destinationCollection.insertOne(req.body)
 
@@ -55,6 +94,19 @@ app.get("/destinations", async (req, res) => {
       message: "Failed to fetch destinations",
     })
   }
+})
+
+
+
+//5datas
+
+app.get('/featured-destinations', async (req, res) => {
+    const result = await destinationCollection
+        .find({ name: { $ne: "" }, imageUrl: { $ne: "" } })
+        .limit(5)
+        .toArray()
+
+    res.send(result)
 })
 
 // Get one destination
@@ -88,8 +140,8 @@ app.get("/destinations/:id", async (req, res) => {
 })
 
 app.post("/booking", async (req, res) => {
-  const data=req.body
-  const result=await bookingCollection.insertOne(data)
+  const data = req.body
+  const result = await bookingCollection.insertOne(data)
   res.send(result)
 })
 
@@ -106,7 +158,8 @@ app.get("/myBookings/:email", async (req, res) => {
     console.error("Error fetching bookings:", error)
     res.status(500).json({ message: "Failed to fetch bookings" })
   }
-}) 
+})
+
 // Cancel a booking
 app.delete("/myBookings/:id", async (req, res) => {
   try {
@@ -141,7 +194,7 @@ app.delete("/myBookings/:id", async (req, res) => {
 });
 
 // Update a destination
-app.patch("/destination/:id", async (req, res) => {
+app.patch("/destination/:id", verifyToken, async (req, res) => {
   try {
     const { id } = req.params
 
@@ -235,3 +288,4 @@ app.get("/", (req, res) => {
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`)
 })
+export default app
