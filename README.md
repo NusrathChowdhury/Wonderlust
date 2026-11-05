@@ -424,7 +424,7 @@ Deployment links will be added here once the final production website is ready.
 
 | Resource | Link |
 |---|---|
-| 🌍 Live Website | Coming Soon |
+| 🌍 Live Website | Coming  Soon! |
 | 💻 GitHub Repository | [NusrathChowdhury/Wonderlust](https://github.com/NusrathChowdhury/Wonderlust) |
 | ⚙️ Backend API | [WanderLust Backend](https://wanderlust-backend-rho.vercel.app) |
 
