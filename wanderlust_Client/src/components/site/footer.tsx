@@ -5,14 +5,10 @@ import { ArrowRight, MapPin, Mail, Phone } from "lucide-react"
 const QUICK_LINKS = [
   { label: "Home", href: "/" },
   { label: "Destinations", href: "/destinations" },
-  { label: "My Bookings", href: "/bookings" },
-  { label: "My Profile", href: "/profile" },
+  { label: "My Bookings", href: "/myBookings" },
 ]
-
 const SUPPORT_LINKS = [
-  { label: "Help Center", href: "/help" },
-  { label: "Terms of Service", href: "/terms" },
-  { label: "Privacy Policy", href: "/privacy" },
+  { label: "Contact Us", href: "mailto:info@wanderlust.com" },
 ]
 
 const CONTACT = {
